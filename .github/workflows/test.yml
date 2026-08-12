@@ -9,73 +9,68 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        exercise: [1, 2, 3, 4, 5]
 
     steps:
-    # 1. 检出代码：这是所有 Actions 任务的第一步
+    # 1. 检出代码
     - name: 检出代码
       uses: actions/checkout@v4
 
-    # 2. 赋予执行权限：关键步骤！否则脚本无法直接运行
+    # 2. 赋予执行权限（所有子目录下的 .bash 文件）
     - name: 赋予脚本执行权限
       run: chmod +x ./exercises/*/.bash
 
-    # 3. 测试练习1到5
-    # 注意：这里去掉了 continue-on-error: true，让失败的任务能正确报错
+    # ========== 5 个练习依次测试 ==========
     - name: 测试 exercise-1
-      id: ex1                           # 设置ID，方便后续引用结果
-      continue-on-error: true           # 即使失败也不中断
+      id: ex1
+      continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-          command_line: ./exercises/exercise-1/.bash
-          assert_file_path: ./exercises/exercise-1/answer.txt
+          # 先 cd 进入子目录，再执行脚本
+          command_line: cd ./exercises/exercise-1/ && ./.bash
+          # 此时 answer.txt 就在当前目录下
+          assert_file_path: ./answer.txt
           expected_result: PASSED
-    
+
     - name: 测试 exercise-2
       id: ex2
       continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-          command_line: ./exercises/exercise-2/.bash
-          assert_file_path: ./exercises/exercise-2/answer.txt
+          command_line: cd ./exercises/exercise-2/ && ./.bash
+          assert_file_path: ./answer.txt
           expected_result: PASSED
-    
+
     - name: 测试 exercise-3
       id: ex3
       continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-          command_line: ./exercises/exercise-3/.bash
-          assert_file_path: ./exercises/exercise-3/answer.txt
+          command_line: cd ./exercises/exercise-3/ && ./.bash
+          assert_file_path: ./answer.txt
           expected_result: PASSED
-    
+
     - name: 测试 exercise-4
       id: ex4
       continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-          command_line: ./exercises/exercise-4/.bash
-          assert_file_path: ./exercises/exercise-4/answer.txt
+          command_line: cd ./exercises/exercise-4/ && ./.bash
+          assert_file_path: ./answer.txt
           expected_result: PASSED
-    
+
     - name: 测试 exercise-5
       id: ex5
       continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-          command_line: ./exercises/exercise-5/.bash
-          assert_file_path: ./exercises/exercise-5/answer.txt
+          command_line: cd ./exercises/exercise-5/ && ./.bash
+          assert_file_path: ./answer.txt
           expected_result: PASSED
-    
-    # ==============================================
-    # 4. 计分与报告（无论前面是否失败，都运行）
-    # ==============================================
+
+    # ========== 计分与报告 ==========
     - name: 计算总分并输出结果
       id: scoring
-      if: always()                      
+      if: always()
       run: |
         SCORE=0
         PASSED_COUNT=0
@@ -122,11 +117,10 @@ jobs:
         echo "通过题数：$PASSED_COUNT / 5"
         echo "=========================================="
         
-
         echo "## 📊 面试题评分结果" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "| 指标 | 结果 |" >> $GITHUB_STEP_SUMMARY
         echo "|------|------|" >> $GITHUB_STEP_SUMMARY
         echo "| 通过题数 | $PASSED_COUNT / 5 |" >> $GITHUB_STEP_SUMMARY
         echo "| 最终得分 | **$SCORE / 100** |" >> $GITHUB_STEP_SUMMARY
-      
+        

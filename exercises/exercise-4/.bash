@@ -1,0 +1,1 @@
+find ./scores -type f \( -name "*.bass" -o -name "*.guitar" \) -exec stat --format "%n %y" {} \;

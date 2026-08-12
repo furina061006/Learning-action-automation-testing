@@ -1,0 +1,77 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+        
+    - name: exercise-1
+      continue-on-error: true
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+          # 执行你的脚本
+          command_line: ./exercises/exercise-1/.bash
+          # 指定期望输出的文件路径
+          assert_file_path: ./exercises/exercise-1/answer.txt
+          # 期望结果是 'PASSED'，即两者相等
+          expected_result: PASSED
+        
+    - name: exercise-2
+      continue-on-error: true
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+          # 执行你的脚本
+          command_line: ./exercises/exercise-2/.bash
+          # 指定期望输出的文件路径
+          assert_file_path: ./exercises/exercise-2/answer.txt
+          # 期望结果是 'PASSED'，即两者相等
+          expected_result: PASSED
+
+    - name: exercise-3
+      continue-on-error: true
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+          # 执行你的脚本
+          command_line: ./exercises/exercise-3/.bash
+          # 指定期望输出的文件路径
+          assert_file_path: ./exercises/exercise-3/answer.txt
+          # 期望结果是 'PASSED'，即两者相等
+          expected_result: PASSED
+        
+    - name: exercise-4
+      continue-on-error: true
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+          # 执行你的脚本
+          command_line: ./exercises/exercise-4/.bash
+          # 指定期望输出的文件路径
+          assert_file_path: ./exercises/exercise-4/answer.txt
+          # 期望结果是 'PASSED'，即两者相等
+          expected_result: PASSED
+
+    - name: exercise-5
+      continue-on-error: true
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+          # 执行你的脚本
+          command_line: ./exercises/exercise-5/.bash
+          # 指定期望输出的文件路径
+          assert_file_path: ./exercises/exercise-5/answer.txt
+          # 期望结果是 'PASSED'，即两者相等
+          expected_result: PASSED
+      
+    - name: 上传测试结果
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: test/build/

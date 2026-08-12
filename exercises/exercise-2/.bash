@@ -1,0 +1,1 @@
+grep -i "DEATH" 486_dead_book.log

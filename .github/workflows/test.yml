@@ -2,7 +2,7 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -10,6 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
+    strategy:
+      matrix:
+        exercise: [1, 2, 3, 4, 5]
+
     steps:
     # 1. 检出代码：这是所有 Actions 任务的第一步
     - name: 检出代码
@@ -22,43 +26,107 @@ jobs:
     # 3. 测试练习1到5
     # 注意：这里去掉了 continue-on-error: true，让失败的任务能正确报错
     - name: 测试 exercise-1
+      id: ex1                           # 设置ID，方便后续引用结果
+      continue-on-error: true           # 即使失败也不中断
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-        command_line: ./exercises/exercise-1/.bash
-        assert_file_path: ./exercises/exercise-1/answer.txt
-        expected_result: PASSED
-
+          command_line: ./exercises/exercise-1/.bash
+          assert_file_path: ./exercises/exercise-1/answer.txt
+          expected_result: PASSED
+    
     - name: 测试 exercise-2
+      id: ex2
+      continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-        command_line: ./exercises/exercise-2/.bash
-        assert_file_path: ./exercises/exercise-2/answer.txt
-        expected_result: PASSED
-
+          command_line: ./exercises/exercise-2/.bash
+          assert_file_path: ./exercises/exercise-2/answer.txt
+          expected_result: PASSED
+    
     - name: 测试 exercise-3
+      id: ex3
+      continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-        command_line: ./exercises/exercise-3/.bash
-        assert_file_path: ./exercises/exercise-3/answer.txt
-        expected_result: PASSED
-
+          command_line: ./exercises/exercise-3/.bash
+          assert_file_path: ./exercises/exercise-3/answer.txt
+          expected_result: PASSED
+    
     - name: 测试 exercise-4
+      id: ex4
+      continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-        command_line: ./exercises/exercise-4/.bash
-        assert_file_path: ./exercises/exercise-4/answer.txt
-        expected_result: PASSED
-
+          command_line: ./exercises/exercise-4/.bash
+          assert_file_path: ./exercises/exercise-4/answer.txt
+          expected_result: PASSED
+    
     - name: 测试 exercise-5
+      id: ex5
+      continue-on-error: true
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-        command_line: ./exercises/exercise-5/.bash
-        assert_file_path: ./exercises/exercise-5/answer.txt
-        expected_result: PASSED
+          command_line: ./exercises/exercise-5/.bash
+          assert_file_path: ./exercises/exercise-5/answer.txt
+          expected_result: PASSED
+    
+    # ==============================================
+    # 4. 计分与报告（无论前面是否失败，都运行）
+    # ==============================================
+    - name: 计算总分并输出结果
+      id: scoring
+      if: always()                      
+      run: |
+        SCORE=0
+        PASSED_COUNT=0
+        
+        if [ "${{ steps.ex1.outcome }}" == "success" ]; then 
+          PASSED_COUNT=$((PASSED_COUNT+1))
+          echo "✅ exercise-1 通过"
+        else 
+          echo "❌ exercise-1 失败"
+        fi
+        
+        if [ "${{ steps.ex2.outcome }}" == "success" ]; then 
+          PASSED_COUNT=$((PASSED_COUNT+1))
+          echo "✅ exercise-2 通过"
+        else 
+          echo "❌ exercise-2 失败"
+        fi
+        
+        if [ "${{ steps.ex3.outcome }}" == "success" ]; then 
+          PASSED_COUNT=$((PASSED_COUNT+1))
+          echo "✅ exercise-3 通过"
+        else 
+          echo "❌ exercise-3 失败"
+        fi
+        
+        if [ "${{ steps.ex4.outcome }}" == "success" ]; then 
+          PASSED_COUNT=$((PASSED_COUNT+1))
+          echo "✅ exercise-4 通过"
+        else 
+          echo "❌ exercise-4 失败"
+        fi
+        
+        if [ "${{ steps.ex5.outcome }}" == "success" ]; then 
+          PASSED_COUNT=$((PASSED_COUNT+1))
+          echo "✅ exercise-5 通过"
+        else 
+          echo "❌ exercise-5 失败"
+        fi
+        
+        SCORE=$((PASSED_COUNT * 20))
+        
+        echo "=========================================="
+        echo "📊 最终得分：$SCORE / 100"
+        echo "通过题数：$PASSED_COUNT / 5"
+        echo "=========================================="
+        
+
+        echo "## 📊 面试题评分结果" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| 指标 | 结果 |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+        echo "| 通过题数 | $PASSED_COUNT / 5 |" >> $GITHUB_STEP_SUMMARY
+        echo "| 最终得分 | **$SCORE / 100** |" >> $GITHUB_STEP_SUMMARY
       
-    - name: 上传测试结果
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-results
-        path: test/build/

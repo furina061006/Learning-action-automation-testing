@@ -11,63 +11,50 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    # 1. 检出代码：这是所有 Actions 任务的第一步
     - name: 检出代码
       uses: actions/checkout@v4
-        
-    - name: exercise-1
-      continue-on-error: true
-      uses: GuillaumeFalourd/assert-command-line-output@v2.4
-      with:
-          # 执行你的脚本
-          command_line: ./exercises/exercise-1/.bash
-          # 指定期望输出的文件路径
-          assert_file_path: ./exercises/exercise-1/answer.txt
-          # 期望结果是 'PASSED'，即两者相等
-          expected_result: PASSED
-        
-    - name: exercise-2
-      continue-on-error: true
-      uses: GuillaumeFalourd/assert-command-line-output@v2.4
-      with:
-          # 执行你的脚本
-          command_line: ./exercises/exercise-2/.bash
-          # 指定期望输出的文件路径
-          assert_file_path: ./exercises/exercise-2/answer.txt
-          # 期望结果是 'PASSED'，即两者相等
-          expected_result: PASSED
 
-    - name: exercise-3
-      continue-on-error: true
-      uses: GuillaumeFalourd/assert-command-line-output@v2.4
-      with:
-          # 执行你的脚本
-          command_line: ./exercises/exercise-3/.bash
-          # 指定期望输出的文件路径
-          assert_file_path: ./exercises/exercise-3/answer.txt
-          # 期望结果是 'PASSED'，即两者相等
-          expected_result: PASSED
-        
-    - name: exercise-4
-      continue-on-error: true
-      uses: GuillaumeFalourd/assert-command-line-output@v2.4
-      with:
-          # 执行你的脚本
-          command_line: ./exercises/exercise-4/.bash
-          # 指定期望输出的文件路径
-          assert_file_path: ./exercises/exercise-4/answer.txt
-          # 期望结果是 'PASSED'，即两者相等
-          expected_result: PASSED
+    # 2. 赋予执行权限：关键步骤！否则脚本无法直接运行
+    - name: 赋予脚本执行权限
+      run: chmod +x ./exercises/*/.bash
 
-    - name: exercise-5
-      continue-on-error: true
+    # 3. 测试练习1到5
+    # 注意：这里去掉了 continue-on-error: true，让失败的任务能正确报错
+    - name: 测试 exercise-1
       uses: GuillaumeFalourd/assert-command-line-output@v2.4
       with:
-          # 执行你的脚本
-          command_line: ./exercises/exercise-5/.bash
-          # 指定期望输出的文件路径
-          assert_file_path: ./exercises/exercise-5/answer.txt
-          # 期望结果是 'PASSED'，即两者相等
-          expected_result: PASSED
+        command_line: ./exercises/exercise-1/.bash
+        assert_file_path: ./exercises/exercise-1/answer.txt
+        expected_result: PASSED
+
+    - name: 测试 exercise-2
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+        command_line: ./exercises/exercise-2/.bash
+        assert_file_path: ./exercises/exercise-2/answer.txt
+        expected_result: PASSED
+
+    - name: 测试 exercise-3
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+        command_line: ./exercises/exercise-3/.bash
+        assert_file_path: ./exercises/exercise-3/answer.txt
+        expected_result: PASSED
+
+    - name: 测试 exercise-4
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+        command_line: ./exercises/exercise-4/.bash
+        assert_file_path: ./exercises/exercise-4/answer.txt
+        expected_result: PASSED
+
+    - name: 测试 exercise-5
+      uses: GuillaumeFalourd/assert-command-line-output@v2.4
+      with:
+        command_line: ./exercises/exercise-5/.bash
+        assert_file_path: ./exercises/exercise-5/answer.txt
+        expected_result: PASSED
       
     - name: 上传测试结果
       if: always()
